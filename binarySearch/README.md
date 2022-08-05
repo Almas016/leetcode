@@ -1,5 +1,7 @@
-# Template 1
-<details><summary>Code</summary>
+# Когда мы можем использовать бинарный поиск?
+Если мы сможем обнаружить какую-то монотонность, например, если  `condition(k) == true`, то `condition(k+1) == true`, тогда мы можем рассмотреть бинарный поиск.
+
+# Basic template
 
 ```go
 func binarySearch(nums []int, target int) int {
@@ -19,62 +21,102 @@ func binarySearch(nums []int, target int) int {
 }
 ```
 
-</details>
-
-
-# Template. l==target
-leetcode problems:
-- [Find K Closest Elements](https://leetcode.com/problems/find-k-closest-elements/)
-
-<details><summary>Code</summary>
-
-```go
-l, r := 0, len(nums)-1
-for l < r {
-    mid := (l + r)/2
-    if nums[mid] < target {
-        l = mid + 1
-    } else {
-        r = mid
-    }
-}
-```
-
-</details>
-
-# Template 3
-Он используется для поиска элемента или условия, требующего доступа к текущему индексу и его ближайшим левым и правым соседним индексам в массиве.
-
-<details><summary>Code</summary>
+# Template. Left == target
 
 ```go
 func binarySearch(nums []int, target int) int {
-	if nums == nil || len(nums) == 0 {
-		return -1
-	}
-
 	l, r := 0, len(nums)-1
-	for l+1 < r {
-		m := l + (r-l)/2
-		if nums[m] == target {
-			return m
-		} else if nums[m] < target {
-			l = m
+	for l < r {
+		mid := (l + r) / 2
+		if nums[mid] >= target  {
+			r = mid
 		} else {
-			r = m
+			l = mid + 1
 		}
 	}
-
-	// Post-processing:
-	// End Condition: left + 1 == right
-	if nums[l] == target {
-		return l
-	}
-	if nums[r] == target {
-		return r
-	}
-	return -1
+	return l
 }
 ```
 
-</details>
+- [35. Search Insert Position](https://leetcode.com/problems/search-insert-position/)
+
+# Template. Mid condition
+
+```go
+func binarySearch(n int) int {
+	l, r := 1, n // could be [0, n], [1, n] etc. Depends on problem
+	for l < r {
+		m := l + (r-l)/2
+		//if condition(mid)
+		if isBadVersion(m) {
+			r = m
+		} else {
+			l = m + 1
+		}
+
+	}
+	return l // l - 1
+}
+
+func isBadVersion(x int) bool {
+	return true
+}
+```
+
+leetcode problems:
+- [278. First Bad Version](https://leetcode.com/problems/first-bad-version/)
+- [69. Sqrt(x)](https://leetcode.com/problems/sqrtx/)
+- [1011. Capacity To Ship Packages Within D Days](https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/)
+- [410. Split Array Largest Sum](https://leetcode.com/problems/split-array-largest-sum/)
+```go
+// 410. Split Array Largest Sum
+func splitArray(nums []int, m int) int {
+	max, sum := 0, 0
+	for _, v := range nums {
+		sum += v
+		if v > max {
+			max = v
+		}
+	}
+	l, r := max, sum
+	for l < r {
+		mid := l + (r-l)/2
+		if condition(mid, m, nums) {
+			r = mid
+		} else {
+			l = mid + 1
+		}
+	}
+	return l
+}
+
+func condition(x, d int, nums []int) bool {
+	count := 1
+	total := 0
+	for _, v := range nums {
+		total += v
+		if total > x {
+			total = v
+			count++
+			if count > d {
+				return false
+			}
+		}
+	}
+	return true
+}
+```
+- [875. Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/)
+```go
+// Koko Eating Bananas
+func condition(m, h int, nums []int) bool {
+	sum := 0
+	for _, v := range nums {
+		sum += (v-1)/m + 1
+	}
+	return sum <= h
+}
+```
+
+# Ref
+- [Powerful Ultimate Binary Search Template](https://leetcode.com/discuss/general-discussion/786126/Python-Powerful-Ultimate-Binary-Search-Template.-Solved-many-problems)
